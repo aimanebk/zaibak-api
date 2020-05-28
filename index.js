@@ -6,9 +6,11 @@ const config = require('config');
 
 
 const auth = require('./routes/auth');
+const user = require('./routes/user');
 
 app.use(express.json());
 app.use('/api/auth', auth);
+app.use('/api/user', user);
 
 const db = config.get('db');
 
