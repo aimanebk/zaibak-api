@@ -26,4 +26,4 @@ function validateRange(range){
 
 
 module.exports.Range = Range;
-module.exports.validateRange = validateRange;
+module.exports.validate = validateRange;
