@@ -5,6 +5,10 @@ const { Range, validate } = require('../models/range');
 const express = require('express');
 const router = express.Router();
 
+router.get('/', [auth, admin], async(req, res) => {
+    const ranges = await getRanges();
+    return res.send(ranges); 
+});
 
 router.post('/', [auth, admin, validator(validate)], async(req, res) => {     
         const range = await createRange(req.body);
@@ -12,6 +16,10 @@ router.post('/', [auth, admin, validator(validate)], async(req, res) => {
         return res.send(range); 
 });
 
+async function getRanges(){
+    const ranges = await Range.find();
+    return ranges;
+}
 
 
 async function createRange(data){
