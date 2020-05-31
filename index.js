@@ -25,12 +25,14 @@ const auth = require('./routes/auth');
 const user = require('./routes/user');
 const range = require('./routes/range');
 const supplier = require('./routes/supplier');
+const product = require('./routes/product');
 
 app.use(express.json());
 app.use('/api/auth', auth);
 app.use('/api/user', user);
 app.use('/api/range', range);
 app.use('/api/supplier', supplier);
+app.use('/api/product', product);
 
 const db = config.get('db');
 
