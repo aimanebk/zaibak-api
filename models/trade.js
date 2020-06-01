@@ -29,8 +29,14 @@ const tradeSchema = new mongoose.Schema({
     },
     price : {
         type : Number,
-        min : 0,
         required : true
+    },
+    description : {
+        type : String,
+        required : true,
+        minlength : 3,
+        maxlength : 50,
+        trim : true
     },
     date : {
         type : Date,
@@ -56,7 +62,6 @@ function validateTrade(trade){
 
     return schema.validate(trade);
 }
-
 
 module.exports.Trade = Trade;
 module.exports.validate = validateTrade;
