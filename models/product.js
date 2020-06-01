@@ -106,6 +106,23 @@ const productSchema = new mongoose.Schema({
   timestamps: true
 });
 
+productSchema.statics.lookup = function(productID){
+    return Product.findById(productID);
+}
+
+productSchema.methods.calculateBuyingPrice = function(quantite, price){
+    let newBuyingPrice = ((this.stock * this.buyingPrice) + price) / (this.stock + quantite);
+
+    this.buyingPrice = newBuyingPrice;
+}
+
+productSchema.methods.updateStock = function(quantite){
+    let newStock = this.stock + quantite;
+    this.stock =  newStock;
+
+    this.stockVariation.push({stock : newStock});
+}
+
 
 const Product = mongoose.model('Product', productSchema);
 
@@ -144,8 +161,9 @@ function validatePurchase(purchase){
                      .min(3),
         refInvoice : Joi.string()
                         .min(3)
-                        .max(),
-       price : Joi.number()
+                        .max(100)
+                        .required(),
+        price : Joi.number()
                   .min(0)
                   .required(),
     });
