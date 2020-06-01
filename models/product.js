@@ -151,6 +151,30 @@ function validate(product){
     return schema.validate(product);
 }
 
+function validateUpdate(product){
+    const schema = Joi.object({
+        article : Joi.string()
+                  .required()
+                  .min(3)
+                  .max(50),
+        type : Joi.string()
+                  .required()
+                  .min(3)
+                  .max(50),
+        sellingPrice : Joi.number()
+                          .required()  
+                          .min(0),
+        discount : Joi.array()
+                      .required(),
+        equivalents : Joi.array()
+                         .required(),    
+        notes : Joi.string()
+                   .required()
+    });
+
+    return schema.validate(product);
+}
+
 function validatePurchase(purchase){
     const schema = Joi.object({
         quantite : Joi.number()
@@ -171,6 +195,8 @@ function validatePurchase(purchase){
     return schema.validate(purchase);
 }
 
+
 module.exports.Product = Product;
 module.exports.validate = validate;
+module.exports.validateUpdate = validateUpdate;
 module.exports.validatePurchase = validatePurchase;
