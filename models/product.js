@@ -195,8 +195,25 @@ function validatePurchase(purchase){
     return schema.validate(purchase);
 }
 
+function validateSell(sell){
+    const schema = Joi.object({
+        username : Joi.string()
+                   .min(3)
+                   .required(),
+        quantity: Joi.number()
+                     .required()
+                     .min(0),
+        price : Joi.number()
+                  .min(0)
+                  .required(),
+    });
+
+    return schema.validate(sell);
+}
+
 
 module.exports.Product = Product;
 module.exports.validate = validate;
 module.exports.validateUpdate = validateUpdate;
 module.exports.validatePurchase = validatePurchase;
+module.exports.validateSell = validateSell;
