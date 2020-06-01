@@ -27,6 +27,7 @@ const range = require('./routes/range');
 const supplier = require('./routes/supplier');
 const product = require('./routes/product');
 const purchase = require('./routes/purchase');
+const sell = require('./routes/sell');
 
 app.use(express.json());
 app.use('/api/auth', auth);
@@ -35,6 +36,7 @@ app.use('/api/range', range);
 app.use('/api/supplier', supplier);
 app.use('/api/product', product);
 app.use('/api/purchase', purchase);
+app.use('/api/sell', sell);
 
 const db = config.get('db');
 
