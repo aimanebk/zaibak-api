@@ -2,11 +2,14 @@ const auth =  require('../middleware/auth');
 const admin =  require('../middleware/admin');
 const validator = require('../middleware/validate');
 const { Product, validatePurchase } = require('../models/product');
+const { Stock } = require('../models/stock');
 const express = require('express');
 const router = express.Router();
 
 
 router.post('/:id', [auth, admin, validator(validatePurchase)], async(req, res) => {     
+        
+    try {
         const product = await Product.lookup(req.params.id);
 
         if(!product)
@@ -15,8 +18,12 @@ router.post('/:id', [auth, admin, validator(validatePurchase)], async(req, res) 
         //UPDATE BUYING PRICE
         product.calculateBuyingPrice(req.body.quantite, req.body.price);
        
-        //UPDATE STOCK
-        product.updateStock(req.body.quantite);
+        //UPDATE STOCK IN PRODUCY COLLECTION
+        let stock = product.updateStock(req.body.quantite);
+
+        //ADD NEW STOCK TO STOCK COLLECTION
+
+        const a = await Stock.stockLog(product.code , stock);
 
         //ADD PURCHASE TO PRODUCT
         product.purchaseVariation.push(req.body);
@@ -24,6 +31,11 @@ router.post('/:id', [auth, admin, validator(validatePurchase)], async(req, res) 
         await product.save();
         
         return res.send(product); 
+
+    } catch (error) {
+        res.status(500).send(error.message);
+    }
+        
 });
 
 

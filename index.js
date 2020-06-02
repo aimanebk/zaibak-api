@@ -39,6 +39,7 @@ app.use('/api/supplier', supplier);
 app.use('/api/product', product);
 app.use('/api/purchase', purchase);
 app.use('/api/sell', sell);
+app.use('/api/return', returns);
 app.use('/api/trade', trade);
 
 const db = config.get('db');

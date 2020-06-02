@@ -54,21 +54,6 @@ const productSchema = new mongoose.Schema({
         type : String,
         trim : true
     },
-    stockVariation : {
-        type : [new mongoose.Schema({
-            stock: {
-                type: Number,
-                required: true,
-                min: 0,
-                default : 0
-            },
-            date: {
-                type: Date,
-                default: Date.now
-            }    
-        })],
-        default : []
-    },
     purchaseVariation : {
         type : [new mongoose.Schema({
             quantite: {
@@ -120,7 +105,7 @@ productSchema.methods.updateStock = function(quantite){
     let newStock = this.stock + quantite;
     this.stock =  newStock;
 
-    this.stockVariation.push({stock : newStock});
+    return newStock
 }
 
 
