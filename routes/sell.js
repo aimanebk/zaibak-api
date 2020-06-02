@@ -2,31 +2,40 @@ const auth =  require('../middleware/auth');
 const validator = require('../middleware/validate');
 const { Product } = require('../models/product');
 const { Trade , validate } = require('../models/trade');
+const { Stock } = require('../models/stock');
 const express = require('express');
 const router = express.Router();
 
 
 router.post('/:id', [auth, validator(validate)], async(req, res) => {     
+        try {
+           //CHECK THE PRODUCT EXISTANCE
+            const product = await Product.lookup(req.params.id);     
 
-        //CHECK THE PRODUCT EXISTANCE
-        const product = await Product.lookup(req.params.id);     
+            if(!product)
+                return res.status(404).send(`Produit n'a pas été trouvé.`);
 
-        if(!product)
-            return res.status(404).send(`Produit n'a pas été trouvé.`);
+            //CHECK THE PRODUCT IN STOCK
+            let numberInStock = product.stock - req.body.quantity;
+            if(numberInStock < 0 )
+                return res.status(400).send(`Cette quantité n'existe pas en stock`);
 
-        //CHECK THE PRODUCT IN STOCK
-        let numberInStock = product.stock - req.body.quantity;
-        if(numberInStock < 0 )
-            return res.status(400).send(`Cette quantité n'existe pas en stock`);
+            //UPDATE STOCK IN PRODUCY COLLECTION
+            let stock = product.updateStock(-req.body.quantity);
 
-        //UPDATE PRODUCT STOCK
-        product.updateStock(-req.body.quantity);
-        await product.save();
+            //ADD NEW STOCK TO STOCK COLLECTION
 
-        //ADD SELL TO TRADES
-        const trade = await addSell(product, req.body);
-    
-        return res.send(trade);         
+            const a = await Stock.stockLog(product.code , stock);
+            await product.save();
+
+            //ADD SELL TO TRADES
+            const trade = await addSell(product, req.body);
+        
+            return res.send(trade);         
+        } catch (error) {
+            res.status(500).send(error.message);
+        }
+         
 });
 
 
