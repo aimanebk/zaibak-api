@@ -35,6 +35,13 @@ router.get('/:id', [auth, admin], async(req, res) => {
         return res.send(product); 
 });
 
+router.get('/user/:id', [auth], async(req, res) => {
+
+        const product = await getUserOneProduct(req.params.id);
+
+        return res.send(product); 
+});
+
 
 
 router.post('/', [auth, admin, validator(validate)], async(req, res) => {     
@@ -304,6 +311,10 @@ async function getAdminOneProduct(matchQuery , filterQuery ){
 
 function getUserProducts(query){
     return Product.find(query).select('_id code article type stock price discount');
+}
+
+function getUserOneProduct(id){
+    return Product.findById(id).select('_id code article type stock price discount');
 }
 
 module.exports = router;
