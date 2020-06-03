@@ -1,3 +1,4 @@
+const moment = require('moment');
 const auth =  require('../middleware/auth');
 const admin =  require('../middleware/admin');
 const validator = require('../middleware/validate');
@@ -5,6 +6,15 @@ const { Product, validate, validateUpdate } = require('../models/product');
 const express = require('express');
 const router = express.Router();
 
+
+router.get('/', [auth, admin], async(req, res) => {
+
+        const query = queryValidation(req.query);
+
+        const products = await getAdminProducts(query, req.query);
+
+        return res.send(products); 
+});
 
 router.post('/', [auth, admin, validator(validate)], async(req, res) => {     
         const product = await createProduct(req.body);
@@ -59,6 +69,116 @@ async function updateProduct(id, newProduct){
     } catch (error) {
         return error.message;
     }
+}
+
+function queryValidation(originalQuery){
+    const { productCode, category } = originalQuery;
+    let query = [];
+    if(productCode) {
+        query.push({ code : productCode});
+        query.push({
+           equivalents :{$in : [productCode]}
+       });
+    }
+    if(category) {
+        query.push({ type : category});
+    }
+
+    if(query.length <= 0)
+        return {};
+
+    let queryc = { $or : query};
+
+    return queryc
+}
+
+async function getAdminProducts(matchQuery , filterQuery ){
+    const { bDate, fDate } = filterQuery;
+    if(!bDate)
+        filterQuery.bDate = moment().startOf('day');
+    if(!fDate)
+        filterQuery.fDate = moment().endOf('day');
+
+    if(filterQuery.bDate > filterQuery.fDate)
+        return []
+
+
+    const products = await Product.aggregate([
+        {
+            $match: matchQuery
+        },
+        {
+            $lookup: {
+                from: 'stocks',
+                localField: 'code',
+                foreignField: 'productCode',
+                as: 'stockI'
+            }
+        },
+        {
+            $lookup: {
+                from: 'stocks',
+                localField: 'code',
+                foreignField: 'productCode',
+                as: 'stockF'
+            }
+        },
+        {
+            $lookup: {
+                from: 'trades',
+                localField: 'code',
+                foreignField: 'code',
+                as: 'out'
+            }
+        }, 
+        {
+            $project: {
+                code : 1,
+                article : 1,
+                type : 1,
+                buyingPrice : 1,
+                sellingPrice : 1,
+                stockI : {
+                        '$filter': {
+                            input: '$stockI',
+                            as: 'stockI',
+                            cond: { $lt: ['$$stockI.date', new Date(filterQuery.bDate)] }
+                        }
+                    },
+                stockF : {
+                        '$filter': {
+                            input: '$stockF',
+                            as: 'stockF',
+                            cond: { $lte: ['$$stockF.date', new Date(filterQuery.fDate)] }
+                        }
+                    },
+                out : {
+                        '$filter': {
+                            input: '$out',
+                            as: 'out',
+                            cond: { $and: [ 
+                            { $gte: [ "$$out.date", new Date(filterQuery.bDate) ] },
+                            { $lte: [ "$$out.date", new Date(filterQuery.fDate) ] }
+                            ] }
+                        }
+                    },
+            }
+        },
+        {
+            $project: {
+                code : 1,
+                article : 1,
+                type : 1,
+                buyingPrice : 1,
+                sellingPrice : 1,
+                stockI : { $max: "$stockI"},
+                stockF : { $max: "$stockF"},
+                out : { $sum : "$out.quantity"}
+            }
+        }
+    ]);
+
+    return products
 }
 
 module.exports = router;
