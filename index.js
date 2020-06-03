@@ -30,6 +30,7 @@ const purchase = require('./routes/purchase');
 const sell = require('./routes/sell');
 const returns = require('./routes/return');
 const trade = require('./routes/trade');
+const report = require('./routes/report');
 
 app.use(express.json());
 app.use('/api/auth', auth);
@@ -41,6 +42,7 @@ app.use('/api/purchase', purchase);
 app.use('/api/sell', sell);
 app.use('/api/return', returns);
 app.use('/api/trade', trade);
+app.use('/api/report', report);
 
 const db = config.get('db');
 
