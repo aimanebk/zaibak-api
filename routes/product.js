@@ -1,4 +1,5 @@
 const moment = require('moment');
+const mongoose = require('mongoose');
 const auth =  require('../middleware/auth');
 const admin =  require('../middleware/admin');
 const validator = require('../middleware/validate');
@@ -14,6 +15,16 @@ router.get('/', [auth, admin], async(req, res) => {
         const products = await getAdminProducts(query, req.query);
 
         return res.send(products); 
+});
+
+
+router.get('/:id', [auth, admin], async(req, res) => {
+
+        const query = { _id : mongoose.Types.ObjectId(req.params.id)};
+
+        const product = await getAdminOneProduct(query, req.query);
+
+        return res.send(product); 
 });
 
 router.post('/', [auth, admin, validator(validate)], async(req, res) => {     
@@ -174,6 +185,106 @@ async function getAdminProducts(matchQuery , filterQuery ){
                 stockI : { $max: "$stockI"},
                 stockF : { $max: "$stockF"},
                 out : { $sum : "$out.quantity"}
+            }
+        }
+    ]);
+
+    return products
+}
+
+async function getAdminOneProduct(matchQuery , filterQuery ){
+    const { bDate, fDate } = filterQuery;
+    if(!bDate)
+        filterQuery.bDate = moment().startOf('day');
+    if(!fDate)
+        filterQuery.fDate = moment().endOf('day');
+
+    if(filterQuery.bDate > filterQuery.fDate)
+        return []
+
+
+    const products = await Product.aggregate([
+        {
+            $match: matchQuery
+        },
+        {
+            $lookup: {
+                from: 'stocks',
+                localField: 'code',
+                foreignField: 'productCode',
+                as: 'stockI'
+            }
+        },
+        {
+            $lookup: {
+                from: 'stocks',
+                localField: 'code',
+                foreignField: 'productCode',
+                as: 'stockF'
+            }
+        },
+        {
+            $lookup: {
+                from: 'trades',
+                localField: 'code',
+                foreignField: 'code',
+                as: 'out'
+            }
+        }, 
+        {
+            $project: {
+                code : 1,
+                article : 1,
+                type : 1,
+                buyingPrice : 1,
+                sellingPrice : 1,
+                stockI : {
+                        '$filter': {
+                            input: '$stockI',
+                            as: 'stockI',
+                            cond: { $lt: ['$$stockI.date', new Date(filterQuery.bDate)] }
+                        }
+                    },
+                stockF : {
+                        '$filter': {
+                            input: '$stockF',
+                            as: 'stockF',
+                            cond: { $lte: ['$$stockF.date', new Date(filterQuery.fDate)] }
+                        }
+                    },
+                out : {
+                        '$filter': {
+                            input: '$out',
+                            as: 'out',
+                            cond: { $and: [ 
+                            { $gte: [ "$$out.date", new Date(filterQuery.bDate) ] },
+                            { $lte: [ "$$out.date", new Date(filterQuery.fDate) ] }
+                            ] }
+                        }
+                    },
+                purchaseVariation : {
+                        '$filter': {
+                            input: '$purchaseVariation',
+                            as: 'purchaseVariation',
+                            cond: { $and: [ 
+                            { $gte: [ "$$purchaseVariation.date", new Date(filterQuery.bDate) ] },
+                            { $lte: [ "$$purchaseVariation.date", new Date(filterQuery.fDate) ] }
+                            ] }
+                        }
+                    },
+            }
+        },
+        {
+            $project: {
+                code : 1,
+                article : 1,
+                type : 1,
+                buyingPrice : 1,
+                sellingPrice : 1,
+                stockI : { $max: "$stockI"},
+                stockF : { $max: "$stockF"},
+                out : { $sum : "$out.quantity"},
+                purchaseVariation : 1
             }
         }
     ]);
