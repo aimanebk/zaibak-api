@@ -204,7 +204,8 @@ async function getAdminProducts(matchQuery , filterQuery ){
                 out : { $sum : "$out.quantity"}
             }
         }
-    ]);
+    ])
+    .allowDiskUse(true);
 
     return products
 }
