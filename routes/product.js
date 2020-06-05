@@ -44,8 +44,12 @@ router.get('/user/:id', [auth], async(req, res) => {
 
 
 
-router.post('/', [auth, admin, validator(validate)], async(req, res) => {     
-        const product = await createProduct(req.body);
+router.post('/', [auth, admin, validator(validate)], async(req, res) => { 
+        let product = await Product.findOne({ code : req.body.code});
+        if(product)
+            return res.status(400).send({ message : 'Ce code est déjà existé '});
+
+        product = await createProduct(req.body);
     
         return res.send(product); 
 });

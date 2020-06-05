@@ -43,7 +43,7 @@ const productSchema = new mongoose.Schema({
         default : 0
     },
     discount : {
-        type : [String],
+        type : [Number],
         default : []
     },
     equivalents : {
@@ -131,6 +131,7 @@ function validate(product){
         discount : Joi.array(),
         equivalents : Joi.array(),    
         notes : Joi.string()
+                   .allow('')
     });
 
     return schema.validate(product);
