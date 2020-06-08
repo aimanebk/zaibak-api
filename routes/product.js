@@ -104,7 +104,7 @@ async function updateProduct(id, newProduct){
 }
 
 function queryValidation(originalQuery){
-    const { productCode, category } = originalQuery;
+    let { productCode, category } = originalQuery;
     let query = [];
     if(productCode) {
         query.push({ code : productCode});
@@ -113,7 +113,12 @@ function queryValidation(originalQuery){
        });
     }
     if(category) {
-        query.push({ type : category});
+        if(typeof category === 'string')
+            category = [category];
+
+        query.push({ 
+            type :{$in : category}
+        });
     }
 
     if(query.length <= 0)
@@ -127,9 +132,15 @@ function queryValidation(originalQuery){
 async function getAdminProducts(matchQuery , filterQuery ){
     const { bDate, fDate } = filterQuery;
     if(!bDate)
-        filterQuery.bDate = moment().startOf('day');
+        filterQuery.bDate = moment().startOf('month').startOf('day');
+    else{
+        filterQuery.bDate = moment(filterQuery.bDate).startOf('day');
+    }
     if(!fDate)
         filterQuery.fDate = moment().endOf('day');
+    else {
+        filterQuery.fDate = moment(filterQuery.fDate).endOf('day');
+    }
 
     if(filterQuery.bDate > filterQuery.fDate)
         return []
