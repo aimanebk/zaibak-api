@@ -271,6 +271,9 @@ async function getAdminOneProduct(matchQuery , filterQuery ){
                 type : 1,
                 buyingPrice : 1,
                 sellingPrice : 1,
+                discount : 1,
+                equivalents : 1,
+                notes : 1,
                 stockI : {
                         '$filter': {
                             input: '$stockI',
@@ -314,6 +317,9 @@ async function getAdminOneProduct(matchQuery , filterQuery ){
                 type : 1,
                 buyingPrice : 1,
                 sellingPrice : 1,
+                discount : 1,
+                equivalents : 1,
+                notes : 1,
                 stockI : { $max: "$stockI"},
                 stockF : { $max: "$stockF"},
                 out : { $sum : "$out.quantity"},
