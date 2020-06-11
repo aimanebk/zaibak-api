@@ -336,7 +336,7 @@ function getUserProducts(query){
 }
 
 function getUserOneProduct(id){
-    return Product.findById(id).select('_id code article type stock price discount');
+    return Product.findById(id).select('_id code article type stock sellingPrice price discount equivalents notes');
 }
 
 module.exports = router;
