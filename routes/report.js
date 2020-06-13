@@ -41,9 +41,15 @@ function queryValidation(originalQuery){
 async function getReport(matchQuery , filterQuery ){
     const { bDate, fDate } = filterQuery;
     if(!bDate)
-        filterQuery.bDate = moment().startOf('day');
+        filterQuery.bDate = moment().startOf('month').startOf('day');
+    else{
+        filterQuery.bDate = moment(filterQuery.bDate).startOf('day');
+    }
     if(!fDate)
         filterQuery.fDate = moment().endOf('day');
+    else {
+        filterQuery.fDate = moment(filterQuery.fDate).endOf('day');
+    }
 
     if(filterQuery.bDate > filterQuery.fDate)
         return []
@@ -106,10 +112,10 @@ async function getReport(matchQuery , filterQuery ){
                 code : 1 ,
                 article : 1 ,
                 type : 1,
-                valueOne : {
+                startValue : {
                   $multiply : ["$stockI.stock", "$buyingPrice"]
                 },
-                valueTwo : {
+                endValue : {
                   $multiply : ["$stockF.stock", "$buyingPrice"]
                 },
             }

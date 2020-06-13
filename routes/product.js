@@ -228,9 +228,15 @@ async function getAdminProducts(matchQuery , filterQuery ){
 async function getAdminOneProduct(matchQuery , filterQuery ){
     const { bDate, fDate } = filterQuery;
     if(!bDate)
-        filterQuery.bDate = moment().startOf('day');
+        filterQuery.bDate = moment().startOf('month').startOf('day');
+    else{
+        filterQuery.bDate = moment(filterQuery.bDate).startOf('day');
+    }
     if(!fDate)
         filterQuery.fDate = moment().endOf('day');
+    else {
+        filterQuery.fDate = moment(filterQuery.fDate).endOf('day');
+    }
 
     if(filterQuery.bDate > filterQuery.fDate)
         return []

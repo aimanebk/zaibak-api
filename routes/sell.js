@@ -13,12 +13,12 @@ router.post('/:id', [auth, validator(validate)], async(req, res) => {
             const product = await Product.lookup(req.params.id);     
 
             if(!product)
-                return res.status(404).send(`Produit n'a pas été trouvé.`);
+                return res.status(404).send({ message : `Produit n'a pas été trouvé.`});
 
             //CHECK THE PRODUCT IN STOCK
             let numberInStock = product.stock - req.body.quantity;
             if(numberInStock < 0 )
-                return res.status(400).send(`Cette quantité n'existe pas en stock`);
+                return res.status(400).send({ message : `Cette quantité n'existe pas en stock`});
 
             //UPDATE STOCK IN PRODUCY COLLECTION
             let stock = product.updateStock(-req.body.quantity);
