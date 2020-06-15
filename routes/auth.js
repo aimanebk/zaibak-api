@@ -16,7 +16,7 @@ router.post('/', validate(validateAuth), async(req, res) => {
             return res.status(400).send('Invalid name or password.');
         
         const token = user.generateAuthToken();
-        return res.send({username : user.name, token : token});
+        return res.send({_id : user._id , username : user.name, role : user.role, token : token});
     } catch (error) {
         res.status(500).send(error.message);
     }

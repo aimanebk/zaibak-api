@@ -1,5 +1,6 @@
 const bcrypt = require('bcrypt');
 const _ = require('lodash');
+const auth =  require('../middleware/auth');
 const { User, validate } = require("../models/user");
 const express = require('express');
 const router = express.Router();
@@ -27,6 +28,16 @@ router.post('/', async(req, res) => {
     }
 });
 
+router.get('/role/:id', [auth], async(req, res) => {
+    const user = await User.findById(req.params.id);
+
+    if(!user)
+        return res.status(400).send({ message : 'utilisateur non trouvé'});
+    
+    return res.send({role : user.role})
+
+});
+
 async function validateUser(name){
     const user = await User.findOne({ name : name });
     return user;
@@ -40,7 +51,7 @@ async function register(data){
         name : data.name,
         email :  data.email,
         password : hashedPassword,
-        isAdmin : data.isAdmin
+        role : data.role
     });
     try {
         await user.save();

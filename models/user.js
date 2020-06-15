@@ -2,6 +2,7 @@ const config = require('config');
 const jwt = require('jsonwebtoken');
 const mongoose = require('mongoose');
 const Joi = require('@hapi/joi');
+const { string } = require('@hapi/joi');
 
 const userSchema = new mongoose.Schema({
     name : {
@@ -16,14 +17,14 @@ const userSchema = new mongoose.Schema({
         required  : true,
         minlength : 8
     },
-    isAdmin : {
-        type :Boolean,
-        default : false
+    role : {
+        type :String,
+        default : 'User'
     }
 });
 
 userSchema.methods.generateAuthToken = function(){
-    const token = jwt.sign({ _id : this._id, isAdmin : this.isAdmin }, config.get('jwtPrivateKey'));
+    const token = jwt.sign({ _id : this._id, role : this.role }, config.get('jwtPrivateKey'));
     return token;
 }
 
@@ -41,7 +42,9 @@ function validate(user){
                      .pattern(/^[a-zA-Z0-9]{3,30}$/),
            
         repeat_password: Joi.string().required().min(8).valid(Joi.ref('password')),
-        isAdmin : Joi.boolean()
+        role : Joi.string()
+                   .min(3)
+                   .max(50),
     });
 
     return schema.validate(user);

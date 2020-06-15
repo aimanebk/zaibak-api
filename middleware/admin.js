@@ -1,5 +1,5 @@
 module.exports = function(req, res, next){
-    if(!req.user.isAdmin)
+    if(!req.user.role || req.user.role != 'Admin' )
         return res.status(403).send('Access denied.');
 
     next();
