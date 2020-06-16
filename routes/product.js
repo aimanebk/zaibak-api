@@ -338,7 +338,7 @@ async function getAdminOneProduct(matchQuery , filterQuery ){
 }
 
 function getUserProducts(query){
-    return Product.find(query).select('_id code article type stock price discount sellingPrice');
+    return Product.find(query).select('_id code article type stock price discount sellingPrice equivalents');
 }
 
 function getUserOneProduct(id){
