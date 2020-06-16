@@ -28,13 +28,11 @@ router.post('/', async(req, res) => {
     }
 });
 
-router.get('/role/:id', [auth], async(req, res) => {
-    const user = await User.findById(req.params.id);
-
-    if(!user)
+router.get('/role', [auth], async(req, res) => {
+    if(!req.user)
         return res.status(400).send({ message : 'utilisateur non trouvé'});
     
-    return res.send({role : user.role})
+    return res.send({role : req.user.role})
 
 });
 
