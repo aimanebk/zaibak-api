@@ -71,6 +71,7 @@ async function createProduct(data){
         type : data.type,
         sellingPrice : data.sellingPrice,
         discount : data.discount,
+        specialDiscount : data.specialDiscount,
         equivalents : data.equivalents,
         notes : data.notes
     });
@@ -92,6 +93,7 @@ async function updateProduct(id, newProduct){
                                     type : newProduct.type,
                                     sellingPrice : newProduct.sellingPrice,
                                     discount : newProduct.discount,
+                                    specialDiscount : newProduct.specialDiscount,
                                     equivalents : newProduct.equivalents,
                                     notes : newProduct.notes
                                 },
@@ -278,6 +280,7 @@ async function getAdminOneProduct(matchQuery , filterQuery ){
                 buyingPrice : 1,
                 sellingPrice : 1,
                 discount : 1,
+                specialDiscount : 1,
                 equivalents : 1,
                 notes : 1,
                 stockI : {
@@ -324,6 +327,7 @@ async function getAdminOneProduct(matchQuery , filterQuery ){
                 buyingPrice : 1,
                 sellingPrice : 1,
                 discount : 1,
+                specialDiscount : 1,
                 equivalents : 1,
                 notes : 1,
                 stockI : { $max: "$stockI"},
@@ -342,7 +346,7 @@ function getUserProducts(query){
 }
 
 function getUserOneProduct(id){
-    return Product.findById(id).select('_id code article type stock sellingPrice price discount equivalents notes');
+    return Product.findById(id).select('-buyingPrice -purchaseVariation -createdAt -updatedAt');
 }
 
 module.exports = router;

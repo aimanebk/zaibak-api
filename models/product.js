@@ -46,6 +46,11 @@ const productSchema = new mongoose.Schema({
         type : [Number],
         default : []
     },
+    specialDiscount : {
+        type : Number,
+        min : 0,
+        default : null
+    },
     equivalents : {
         type : [String],
         default : []
@@ -129,6 +134,8 @@ function validate(product){
                           .required()  
                           .min(0),
         discount : Joi.array(),
+        specialDiscount : Joi.number()
+                          .min(0),
         equivalents : Joi.array(),    
         notes : Joi.string()
                    .allow('')
@@ -152,6 +159,9 @@ function validateUpdate(product){
                           .min(0),
         discount : Joi.array()
                       .required(),
+        specialDiscount : Joi.number()
+                             .required()
+                             .min(0),
         equivalents : Joi.array()
                          .required(),    
         notes : Joi.string()
