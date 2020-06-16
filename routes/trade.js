@@ -13,7 +13,7 @@ router.get('/', [auth, admin], async(req, res) => {
 
 async function getTrades(){
     try {
-        const trades = await Trade.find();
+        const trades = await Trade.find().sort({date : -1});
         return trades;
     } catch (error) {
         return error.message;
