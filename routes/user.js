@@ -1,22 +1,19 @@
 const bcrypt = require('bcrypt');
 const _ = require('lodash');
 const auth =  require('../middleware/auth');
+const validation = require('../middleware/validate')
 const { User, validate } = require("../models/user");
 const express = require('express');
 const router = express.Router();
 
-router.post('/', async(req, res) => {
-    try {
-        const { error } = validate(req.body);
-        if(error)
-            return res.status(400).send(error.details[0].message);
-        
+router.post('/', validation(validate), async(req, res) => {
+    try {       
         let user = await validateUser(req.body.name)
         if(user)   
-            return res.status(400).send('User already registered');
+            return res.status(400).send({message : 'User already registered'});
 
         if(req.body.password !== req.body.repeat_password)
-            return res.status(400).send('Password Invalid ');
+            return res.status(400).send({message : 'Password Invalid '});
         
         user = await register(req.body);
         

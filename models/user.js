@@ -41,7 +41,7 @@ function validate(user){
                      .min(8)
                      .pattern(/^[a-zA-Z0-9]{3,30}$/),
            
-        repeat_password: Joi.string().required().min(8).valid(Joi.ref('password')),
+        repeat_password: Joi.string().required().min(8),
         role : Joi.string()
                    .min(3)
                    .max(50),
