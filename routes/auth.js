@@ -9,11 +9,11 @@ router.post('/', validate(validateAuth), async(req, res) => {
     try {     
         let user = await validateUser(req.body.name)
         if(!user)   
-            return res.status(400).send('Invalid name or password.');
+            return res.status(400).send({message : 'Invalid name or password.'});
 
         const validPassword = await validatePassword(req.body.password, user.password);
         if(!validPassword)   
-            return res.status(400).send('Invalid name or password.');
+            return res.status(400).send({message : 'Invalid name or password.'});
         
         const token = user.generateAuthToken();
         return res.send({_id : user._id , username : user.name, role : user.role, token : token});

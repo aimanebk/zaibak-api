@@ -53,12 +53,10 @@ function validate(user){
 function validateAuth(user){
     const schema = Joi.object({
         name : Joi.string()
-                   .min(3)
                    .max(50)
                    .required(),
         password: Joi.string()
                      .required()
-                     .min(8)
                      .pattern(/^[a-zA-Z0-9]{3,30}$/)
     });
 
