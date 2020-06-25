@@ -1,13 +1,14 @@
 const auth =  require('../middleware/auth');
 const admin =  require('../middleware/admin');
 const validator = require('../middleware/validate');
+const validateObjectId = require('../middleware/validateObjectId');
 const { Product, validatePurchase } = require('../models/product');
 const { Stock } = require('../models/stock');
 const express = require('express');
 const router = express.Router();
 
 
-router.post('/:id', [auth, admin, validator(validatePurchase)], async(req, res) => {     
+router.post('/:id', [auth, admin, validateObjectId, validator(validatePurchase)], async(req, res) => {     
         
     try {
         const product = await Product.lookup(req.params.id);
