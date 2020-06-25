@@ -317,6 +317,8 @@ async function getAdminOneProduct(matchQuery , filterQuery ){
                             { $lte: [ "$$purchaseVariation.date", new Date(filterQuery.fDate) ] }
                             ] }
                         }
+                        
+
                     },
             }
         },
@@ -336,7 +338,60 @@ async function getAdminOneProduct(matchQuery , filterQuery ){
                 out : { $sum : "$out.quantity"},
                 purchaseVariation : 1
             }
+        },
+        {
+            $unwind: {
+                path: "$purchaseVariation",
         }
+        },
+        {
+            $sort: {
+                "purchaseVariation.date": -1
+            }
+        }, 
+        {
+            $group: {
+                _id: {
+                    _id: "$_id",
+                    code: "$code",
+                    article : "$article",
+                    type : "$type",
+                    buyingPrice : "$buyingPrice",
+                    sellingPrice : "$sellingPrice",
+                    discount : "$discount",
+                    specialDiscount : "$specialDiscount",
+                    equivalents : "$equivalents",
+                    notes : "$notes",
+                    stockI : "$stockI",
+                    stockF : "$stockF",
+                    out : "$out",
+                },
+                purchaseVariation: {
+                    $push: {
+                        purchaseVariation: "$purchaseVariation"
+                    }
+                }
+            }
+        }, 
+        {
+            $project: {
+                "_id": "$_id._id",
+                "code": "$_id.code",
+                "article" : "$_id.article",
+                "type" : "$_id.type",
+                "buyingPrice" : "$_id.buyingPrice",
+                "sellingPrice" : "$_id.sellingPrice",
+                "discount" : "$_id.discount",
+                "specialDiscount" : "$_id.specialDiscount",
+                "equivalents" : "$_id.equivalents",
+                "notes" : "$_id.notes",
+                "stockI" : "$_id.stockI",
+                "stockF" : "$_id.stockF",
+                "out" : "$_id.out",
+                "purchaseVariation": "$purchaseVariation.purchaseVariation"
+            }
+        }
+
     ]);
 
     return products
