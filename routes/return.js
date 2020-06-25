@@ -1,6 +1,7 @@
 const admin =  require('../middleware/admin');
 const auth =  require('../middleware/auth');
 const validator = require('../middleware/validate');
+const validateObjectId = require('../middleware/validateObjectId');
 const { Product } = require('../models/product');
 const { Trade , validate } = require('../models/trade');
 const { Stock } = require('../models/stock');
@@ -8,7 +9,7 @@ const express = require('express');
 const router = express.Router();
 
 
-router.post('/:id', [auth, admin, validator(validate)], async(req, res) => {     
+router.post('/:id', [auth, admin, validateObjectId, validator(validate)], async(req, res) => {     
     try {
         //CHECK THE PRODUCT EXISTANCE
         const product = await Product.lookup(req.params.id);     

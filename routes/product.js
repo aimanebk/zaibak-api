@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const auth =  require('../middleware/auth');
 const admin =  require('../middleware/admin');
 const validator = require('../middleware/validate');
+const validateObjectId = require('../middleware/validateObjectId');
 const { Product, validate, validateUpdate } = require('../models/product');
 const express = require('express');
 const router = express.Router();
@@ -26,7 +27,7 @@ router.get('/user', [auth ], async(req, res) => {
     return res.send(products); 
 });
 
-router.get('/:id', [auth, admin], async(req, res) => {
+router.get('/:id', [auth, admin, validateObjectId], async(req, res) => {
 
         const query = { _id : mongoose.Types.ObjectId(req.params.id)};
 
@@ -35,7 +36,7 @@ router.get('/:id', [auth, admin], async(req, res) => {
         return res.send(product); 
 });
 
-router.get('/user/:id', [auth], async(req, res) => {
+router.get('/user/:id', [auth, validateObjectId], async(req, res) => {
 
         const product = await getUserOneProduct(req.params.id);
 
