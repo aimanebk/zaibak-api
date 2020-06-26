@@ -110,9 +110,9 @@ function queryValidation(originalQuery){
     let { productCode, category } = originalQuery;
     let query = [];
     if(productCode) {
-        query.push({ code : productCode});
+        query.push({ code :  new RegExp(`^${productCode}$`, 'i') });
         query.push({
-           equivalents :{$in : [productCode]}
+           equivalents :{$in : [new RegExp(`^${productCode}$`, 'i')]}
        });
     }
     if(category) {
@@ -342,6 +342,7 @@ async function getAdminOneProduct(matchQuery , filterQuery ){
         {
             $unwind: {
                 path: "$purchaseVariation",
+                preserveNullAndEmptyArrays : true
         }
         },
         {
