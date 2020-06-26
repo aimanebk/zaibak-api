@@ -6,15 +6,24 @@ const express = require('express');
 const router = express.Router();
 
 router.get('/', [auth, admin], async(req, res) => {
-    const suppliers = await getSuppliers();
-    return res.send(suppliers); 
+    try {
+        const suppliers = await getSuppliers();
+        return res.send(suppliers); 
+
+    } catch (error) {
+        res.status(500).send(error.message);
+    }
 });
 
 
-router.post('/', [auth, admin, validator(validate)], async(req, res) => {     
+router.post('/', [auth, admin, validator(validate)], async(req, res) => {  
+    try {
         const supplier = await createSupplier(req.body);
     
-        return res.send(supplier); 
+        return res.send(supplier);   
+    } catch (error) {
+        res.status(500).send(error.message);  
+    }   
 });
 
 async function getSuppliers(){
@@ -28,13 +37,9 @@ async function createSupplier(data){
         name : data.name
     });
 
-    try {
-        await supplier.save();
-        return supplier;
+    await supplier.save();
+    return supplier;
 
-    } catch (error) {
-        return error.message;
-    }
 }
 
 module.exports = router;

@@ -46,13 +46,8 @@ async function addReturn(product , data){
         description : "Return"
     });
 
-    try {
-        await trade.save();
-        return trade;
-
-    } catch (error) {
-        return error.message;
-    }
+    await trade.save();
+    return trade;       
 }
 
 

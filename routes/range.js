@@ -6,14 +6,24 @@ const express = require('express');
 const router = express.Router();
 
 router.get('/', [auth, admin], async(req, res) => {
-    const ranges = await getRanges();
-    return res.send(ranges); 
+    try {
+        const ranges = await getRanges();
+        return res.send(ranges); 
+
+    } catch (error) {
+        res.status(500).send(error.message);
+    }
 });
 
 router.post('/', [auth, admin, validator(validate)], async(req, res) => {     
+    try {
         const range = await createRange(req.body);
     
         return res.send(range); 
+
+    } catch (error) {
+        res.status(500).send(error.message);  
+    }
 });
 
 async function getRanges(){
@@ -27,13 +37,8 @@ async function createRange(data){
         name : data.name
     });
 
-    try {
-        await range.save();
-        return range;
-
-    } catch (error) {
-        return error.message;
-    }
+    await range.save();
+    return range;
 }
 
 module.exports = router;

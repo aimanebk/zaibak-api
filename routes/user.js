@@ -26,10 +26,16 @@ router.post('/', validation(validate), async(req, res) => {
 });
 
 router.get('/role', [auth], async(req, res) => {
-    if(!req.user)
-        return res.status(400).send({ message : 'utilisateur non trouvé'});
+    try {
+        if(!req.user)
+            return res.status(400).send({ message : 'utilisateur non trouvé'});
     
-    return res.send({role : req.user.role})
+        return res.send({role : req.user.role})
+
+    } catch (error) {
+        res.status(500).send(error.message); 
+    }
+
 
 });
 
@@ -48,12 +54,10 @@ async function register(data){
         password : hashedPassword,
         role : data.role
     });
-    try {
-        await user.save();
-        return user ;
-    } catch (error) {
-        return error.message;
-    }
+    
+    await user.save();
+    return user ;
+
 }
 
 module.exports = router;

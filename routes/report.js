@@ -9,12 +9,17 @@ const router = express.Router();
 
 
 router.get('/', [auth, admin], async(req, res) => {
-
+    try {
         const query = queryValidation(req.query);
 
         const products = await getReport(query, req.query);
 
-        return res.send(products); 
+        return res.send(products);
+        
+    } catch (error) {
+        res.status(500).send(error.message);  
+    }
+ 
 });
 
 function queryValidation(originalQuery){

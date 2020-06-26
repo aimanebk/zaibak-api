@@ -50,13 +50,8 @@ async function addSell(product , data){
         description : "Sell"
     });
 
-    try {
-        await trade.save();
-        return trade;
-
-    } catch (error) {
-        return error.message;
-    }
+    await trade.save();
+    return trade;
 }
 
 

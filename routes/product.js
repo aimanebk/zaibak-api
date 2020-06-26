@@ -10,42 +10,61 @@ const router = express.Router();
 
 
 router.get('/', [auth, admin], async(req, res) => {
-
+    try {
         const query = queryValidation(req.query);
 
         const products = await getAdminProducts(query, req.query);
 
         return res.send(products); 
+
+    } catch (error) {
+        res.status(500).send(error.message);
+    }
 });
 
 router.get('/user', [auth ], async(req, res) => {
 
-    const query = queryValidation(req.query);
+    try {
+        const query = queryValidation(req.query);
 
-    const products = await getUserProducts(query);
+        const products = await getUserProducts(query);
 
-    return res.send(products); 
+        return res.send(products); 
+    } catch (error) {
+        res.status(500).send(error.message);
+    }
 });
 
 router.get('/:id', [auth, admin, validateObjectId], async(req, res) => {
 
+    try {
         const query = { _id : mongoose.Types.ObjectId(req.params.id)};
 
         const product = await getAdminOneProduct(query, req.query);
 
         return res.send(product); 
+
+    } catch (error) {
+        res.status(500).send(error.message);
+    }
 });
 
 router.get('/user/:id', [auth, validateObjectId], async(req, res) => {
 
+    try {
         const product = await getUserOneProduct(req.params.id);
 
         return res.send(product); 
+
+    } catch (error) {
+        res.status(500).send(error.message);
+    }
 });
 
 
 
 router.post('/', [auth, admin, validator(validate)], async(req, res) => { 
+    try {
         let product = await Product.findOne({ code : req.body.code});
         if(product)
             return res.status(400).send({ message : 'Ce code est déjà existé '});
@@ -53,14 +72,23 @@ router.post('/', [auth, admin, validator(validate)], async(req, res) => {
         product = await createProduct(req.body);
     
         return res.send(product); 
+
+    } catch (error) {
+        res.status(500).send(error.message);
+    }
 });
 
 router.put('/:id', [auth, admin, validator(validateUpdate)], async(req, res) => {
+    try {
         const result = await updateProduct(req.params.id, req.body);
         if(result.n <= 0)
             return res.status(404).send({ message : `Produit n'a pas été trouvé.`});
 
         return res.send(result); 
+
+    } catch (error) {
+        res.status(500).send(error.message);  
+    }
 });
 
 
@@ -77,33 +105,23 @@ async function createProduct(data){
         notes : data.notes
     });
 
-    try {
-        await product.save();
-        return product;
-
-    } catch (error) {
-        return error.message;
-    }
+    await product.save();
+    return product;
 }
 
 async function updateProduct(id, newProduct){
-    try {
-        const result = await Product.updateOne({"_id" : id },
-                                { 
-                                    article : newProduct.article,
-                                    type : newProduct.type,
-                                    sellingPrice : newProduct.sellingPrice,
-                                    discount : newProduct.discount,
-                                    specialDiscount : newProduct.specialDiscount,
-                                    equivalents : newProduct.equivalents,
-                                    notes : newProduct.notes
-                                },
-                                { new : true});
-        return result;
-
-    } catch (error) {
-        return error.message;
-    }
+    const result = await Product.updateOne({"_id" : id },
+                            { 
+                                article : newProduct.article,
+                                type : newProduct.type,
+                                sellingPrice : newProduct.sellingPrice,
+                                discount : newProduct.discount,
+                                specialDiscount : newProduct.specialDiscount,
+                                equivalents : newProduct.equivalents,
+                                notes : newProduct.notes
+                            },
+                            { new : true});
+    return result;
 }
 
 function queryValidation(originalQuery){

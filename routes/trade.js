@@ -5,20 +5,19 @@ const express = require('express');
 const router = express.Router();
 
 
-router.get('/', [auth, admin], async(req, res) => {     
-    const trades = await getTrades();
-    return res.send(trades);        
+router.get('/', [auth, admin], async(req, res) => {  
+    try {
+        const trades = await getTrades();
+        return res.send(trades);  
+    } catch (error) {
+        res.status(500).send(error.message);  
+    }        
 });
 
 
 async function getTrades(){
-    try {
-        const trades = await Trade.find().sort({date : -1});
-        return trades;
-    } catch (error) {
-        return error.message;
-    }
-
+    const trades = await Trade.find().sort({date : -1});
+    return trades;
 }
 
 
