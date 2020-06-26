@@ -58,7 +58,7 @@ router.post('/', [auth, admin, validator(validate)], async(req, res) => {
 router.put('/:id', [auth, admin, validator(validateUpdate)], async(req, res) => {
         const result = await updateProduct(req.params.id, req.body);
         if(result.n <= 0)
-            return res.status(404).send(`Produit n'a pas été trouvé.`);
+            return res.status(404).send({ message : `Produit n'a pas été trouvé.`});
 
         return res.send(result); 
 });

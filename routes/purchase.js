@@ -14,7 +14,7 @@ router.post('/:id', [auth, admin, validateObjectId, validator(validatePurchase)]
         const product = await Product.lookup(req.params.id);
 
         if(!product)
-            return res.status(404).send(`Produit n'a pas été trouvé.`);
+            return res.status(404).send({ message : `Produit n'a pas été trouvé.`});
 
         //UPDATE BUYING PRICE
         product.calculateBuyingPrice(req.body.quantite, req.body.price);
