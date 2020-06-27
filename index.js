@@ -1,58 +1,10 @@
 const express = require('express');
 const app = express();
 
-const mongoose = require('mongoose');
-const config = require('config');
-const cors = require('cors')
+require('./startup/mongo')();
+require('./startup/cors')(app);
+require('./startup/routes')(app);
 
-var allowCrossDomain = function(req, res, next){
-	var allowedOrigins = ['http://localhost:4200'];
-	var origin = req.headers.origin;
-	if(allowedOrigins.indexOf(origin) > -1){
-	   res.setHeader('Access-Control-Allow-Origin', origin);
-	}
-    res.header('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE, HEAD, OPTIONS');
-    res.header('Access-Control-Allow-Headers', 'Content-Type', 'Authorization');
-    next();
-}
-
-app.options('*', cors())
-
-app.use(allowCrossDomain);
-
-
-const auth = require('./routes/auth');
-const user = require('./routes/user');
-const range = require('./routes/range');
-const supplier = require('./routes/supplier');
-const product = require('./routes/product');
-const purchase = require('./routes/purchase');
-const sell = require('./routes/sell');
-const returns = require('./routes/return');
-const trade = require('./routes/trade');
-const report = require('./routes/report');
-
-app.use(express.json());
-app.use('/api/auth', auth);
-app.use('/api/user', user);
-app.use('/api/range', range);
-app.use('/api/supplier', supplier);
-app.use('/api/product', product);
-app.use('/api/purchase', purchase);
-app.use('/api/sell', sell);
-app.use('/api/return', returns);
-app.use('/api/trade', trade);
-app.use('/api/report', report);
-
-const db = config.get('db');
-
-mongoose.connect(db, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    useFindAndModify: false,
-    useCreateIndex : true,
-    retryWrites: false})
-.then(() => console.log(`Connected to ${db} ...`));
 
 const port = process.env.PORT || 3000 ;
 
