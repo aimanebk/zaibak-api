@@ -3,6 +3,7 @@ const app = express();
 
 require('./startup/mongo')();
 require('./startup/cors')(app);
+require('./startup/config')();
 require('./startup/routes')(app);
 
 
