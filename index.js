@@ -5,6 +5,7 @@ require('./startup/mongo')();
 require('./startup/cors')(app);
 require('./startup/config')();
 require('./startup/routes')(app);
+require('./startup/prod')(app);
 
 
 const port = process.env.PORT || 3000 ;
