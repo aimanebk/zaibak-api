@@ -1,7 +1,8 @@
 const cors = require('cors')
 
 var allowCrossDomain = function(req, res, next){
-	var allowedOrigins = ['http://localhost:4200', 'https://stark-dawn-53505.herokuapp.com'];
+    var allowedOrigins = ['http://localhost:4200', 'https://stark-dawn-53505.herokuapp.com',
+                          'https://zaibak.web.app'];
 	var origin = req.headers.origin;
 	if(allowedOrigins.indexOf(origin) > -1){
 	   res.setHeader('Access-Control-Allow-Origin', origin);
