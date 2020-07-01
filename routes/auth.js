@@ -23,7 +23,7 @@ router.post('/', validate(validateAuth), async(req, res) => {
 });
 
 async function validateUser(name){
-    const user = await User.findOne({ name : name });
+    const user = await User.findOne({ name : new RegExp(`^${name}$`, 'i') });
     return user;
 }
 
