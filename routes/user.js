@@ -18,9 +18,7 @@ router.post('/', validation(validate), async(req, res) => {
         
         user = await register(req.body);
         
-        const token = user.generateAuthToken();
-
-        return res.header('x-auth-token', token).send(_.pick(user, ['_id', 'name']));
+        return res.send({message : 'User registred'});
     } catch (error) {
         res.status(500).send(error.message);
     }
