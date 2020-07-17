@@ -2,7 +2,7 @@ const config = require('config');
 const jwt = require('jsonwebtoken');
 const mongoose = require('mongoose');
 const Joi = require('@hapi/joi');
-const { string } = require('@hapi/joi');
+const crypto = require('crypto');
 
 const userSchema = new mongoose.Schema({
     name : {
@@ -63,6 +63,12 @@ function validateAuth(user){
     return schema.validate(user);
 }
 
+
+function createCsrfToken() {
+    return crypto.randomBytes(32).toString('hex');
+}
+
 module.exports.User = User;
 module.exports.validate = validate;
 module.exports.validateAuth = validateAuth;
+module.exports.createCsrfToken = createCsrfToken;

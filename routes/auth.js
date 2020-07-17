@@ -1,7 +1,7 @@
 const validate = require('../middleware/validate')
 const bcrypt = require('bcrypt');
 const _ = require('lodash');
-const { User, validateAuth } = require("../models/user");
+const { User, validateAuth, createCsrfToken } = require("../models/user");
 const express = require('express');
 const router = express.Router();
 
@@ -17,7 +17,11 @@ router.post('/', validate(validateAuth), async(req, res) => {
         
         const token = user.generateAuthToken();
 
+        var csrfToken = createCsrfToken();
+
         res.cookie("SESSIONID", token, {httpOnly:true/*, secure:true*/});
+
+        res.cookie("XSRF-TOKEN", csrfToken);
 
         return res.send({_id : user._id , username : user.name, role : user.role});
     } catch (error) {
@@ -34,5 +38,6 @@ async function validatePassword(pass1, pass2){
     const result = await bcrypt.compare(pass1, pass2);
     return result;
 }
+
 
 module.exports = router;

@@ -1,11 +1,12 @@
 const auth =  require('../middleware/auth');
 const admin = require('../middleware/admin');
+const checkCsrfToken = require('../middleware/csrf');
 const { Trade } = require('../models/trade');
 const express = require('express');
 const router = express.Router();
 
 
-router.get('/', [auth, admin], async(req, res) => {  
+router.get('/', [auth, checkCsrfToken, admin], async(req, res) => {  
     try {
         const trades = await getTrades();
         return res.send(trades);  
