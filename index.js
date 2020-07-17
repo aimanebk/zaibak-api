@@ -4,6 +4,7 @@ const app = express();
 require('./startup/mongo')();
 require('./startup/cors')(app);
 require('./startup/config')();
+require('./startup/cookie')(app);
 require('./startup/routes')(app);
 require('./startup/prod')(app);
 
