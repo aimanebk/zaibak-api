@@ -1,7 +1,7 @@
 const validate = require('../middleware/validate')
 const bcrypt = require('bcrypt');
 const _ = require('lodash');
-const { User, validateAuth } = require("../models/user");
+const { User, validateAuth, createCsrfToken } = require("../models/user");
 const express = require('express');
 const router = express.Router();
 
@@ -16,7 +16,16 @@ router.post('/', validate(validateAuth), async(req, res) => {
             return res.status(400).send({message : 'Invalid name or password.'});
         
         const token = user.generateAuthToken();
-        return res.send({_id : user._id , username : user.name, role : user.role, token : token});
+
+        var csrfToken = createCsrfToken();
+
+        const cookieExpirationDate = new Date(Date.now() + 1000 * 60 * 60 * 24 * 365 * 10) // 10 YEARS
+
+        res.cookie("SESSIONID", token, {httpOnly:true/*, secure:true*/, expires : cookieExpirationDate });
+
+        res.cookie("XSRF-TOKEN", csrfToken, {expires : cookieExpirationDate });
+
+        return res.send({_id : user._id , username : user.name, role : user.role});
     } catch (error) {
         res.status(500).send(error.message);
     }
@@ -31,5 +40,6 @@ async function validatePassword(pass1, pass2){
     const result = await bcrypt.compare(pass1, pass2);
     return result;
 }
+
 
 module.exports = router;

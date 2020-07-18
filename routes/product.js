@@ -2,6 +2,7 @@ const moment = require('moment');
 const mongoose = require('mongoose');
 const auth =  require('../middleware/auth');
 const admin =  require('../middleware/admin');
+const checkCsrfToken =  require('../middleware/csrf');
 const validator = require('../middleware/validate');
 const validateObjectId = require('../middleware/validateObjectId');
 const { Product, validate, validateUpdate } = require('../models/product');
@@ -9,7 +10,7 @@ const express = require('express');
 const router = express.Router();
 
 
-router.get('/', [auth, admin], async(req, res) => {
+router.get('/', [auth, checkCsrfToken, admin], async(req, res) => {
     try {
         const query = queryValidation(req.query);
 
@@ -22,7 +23,7 @@ router.get('/', [auth, admin], async(req, res) => {
     }
 });
 
-router.get('/user', [auth ], async(req, res) => {
+router.get('/user', [auth, checkCsrfToken ], async(req, res) => {
 
     try {
         const query = queryValidation(req.query);
@@ -35,7 +36,7 @@ router.get('/user', [auth ], async(req, res) => {
     }
 });
 
-router.get('/:id', [auth, admin, validateObjectId], async(req, res) => {
+router.get('/:id', [auth, checkCsrfToken, admin, validateObjectId], async(req, res) => {
 
     try {
         const query = { _id : mongoose.Types.ObjectId(req.params.id)};
@@ -49,7 +50,7 @@ router.get('/:id', [auth, admin, validateObjectId], async(req, res) => {
     }
 });
 
-router.get('/user/:id', [auth, validateObjectId], async(req, res) => {
+router.get('/user/:id', [auth, checkCsrfToken, validateObjectId], async(req, res) => {
 
     try {
         const product = await getUserOneProduct(req.params.id);

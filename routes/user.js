@@ -1,8 +1,9 @@
 const bcrypt = require('bcrypt');
 const _ = require('lodash');
 const auth =  require('../middleware/auth');
-const validation = require('../middleware/validate')
-const { User, validate } = require("../models/user");
+const checkCsrfToken =  require('../middleware/csrf');
+const validation = require('../middleware/validate');
+const { User, validate, createCsrfToken } = require("../models/user");
 const express = require('express');
 const router = express.Router();
 
@@ -17,20 +18,18 @@ router.post('/', validation(validate), async(req, res) => {
         
         user = await register(req.body);
         
-        const token = user.generateAuthToken();
-
-        return res.header('x-auth-token', token).send(_.pick(user, ['_id', 'name']));
+        return res.send({message : 'User registred'});
     } catch (error) {
         res.status(500).send(error.message);
     }
 });
 
-router.get('/role', [auth], async(req, res) => {
+router.get('/info', [auth, checkCsrfToken], async(req, res) => {
     try {
         if(!req.user)
             return res.status(400).send({ message : 'utilisateur non trouvé'});
     
-        return res.send({role : req.user.role})
+        return res.send({_id : req.user._id , username : req.user.name, role : req.user.role})
 
     } catch (error) {
         res.status(500).send(error.message); 

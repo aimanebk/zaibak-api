@@ -2,13 +2,14 @@ const moment = require('moment');
 const mongoose = require('mongoose');
 const auth =  require('../middleware/auth');
 const admin =  require('../middleware/admin');
+const checkCsrfToken =  require('../middleware/csrf');
 const validator = require('../middleware/validate');
 const { Product, validate, validateUpdate } = require('../models/product');
 const express = require('express');
 const router = express.Router();
 
 
-router.get('/', [auth, admin], async(req, res) => {
+router.get('/', [auth, checkCsrfToken, admin], async(req, res) => {
     try {
         const query = queryValidation(req.query);
 
