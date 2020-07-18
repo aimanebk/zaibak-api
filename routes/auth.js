@@ -19,9 +19,11 @@ router.post('/', validate(validateAuth), async(req, res) => {
 
         var csrfToken = createCsrfToken();
 
-        res.cookie("SESSIONID", token, {httpOnly:true/*, secure:true*/});
+        const cookieExpirationDate = new Date(Date.now() + 1000 * 60 * 60 * 24 * 365 * 10) // 10 YEARS
 
-        res.cookie("XSRF-TOKEN", csrfToken);
+        res.cookie("SESSIONID", token, {httpOnly:true/*, secure:true*/, expires : cookieExpirationDate });
+
+        res.cookie("XSRF-TOKEN", csrfToken, {expires : cookieExpirationDate });
 
         return res.send({_id : user._id , username : user.name, role : user.role});
     } catch (error) {
