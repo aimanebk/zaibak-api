@@ -97,6 +97,7 @@ async function createProduct(data){
     const product =  new Product({
         code : data.code,
         article : data.article,
+        brand : data.brand,
         type : data.type,
         sellingPrice : data.sellingPrice,
         discount : data.discount,
@@ -113,6 +114,7 @@ async function updateProduct(id, newProduct){
     const result = await Product.updateOne({"_id" : id },
                             { 
                                 article : newProduct.article,
+                                brand : newProduct.brand,
                                 type : newProduct.type,
                                 sellingPrice : newProduct.sellingPrice,
                                 discount : newProduct.discount,
@@ -199,6 +201,7 @@ async function getAdminProducts(matchQuery , filterQuery ){
             $project: {
                 code : 1,
                 article : 1,
+                brand : 1,
                 type : 1,
                 buyingPrice : 1,
                 sellingPrice : 1,
@@ -232,6 +235,7 @@ async function getAdminProducts(matchQuery , filterQuery ){
             $project: {
                 code : 1,
                 article : 1,
+                brand : 1,
                 type : 1,
                 buyingPrice : 1,
                 sellingPrice : 1,
@@ -295,6 +299,7 @@ async function getAdminOneProduct(matchQuery , filterQuery ){
             $project: {
                 code : 1,
                 article : 1,
+                brand : 1,
                 type : 1,
                 buyingPrice : 1,
                 sellingPrice : 1,
@@ -344,6 +349,7 @@ async function getAdminOneProduct(matchQuery , filterQuery ){
             $project: {
                 code : 1,
                 article : 1,
+                brand : 1,
                 type : 1,
                 buyingPrice : 1,
                 sellingPrice : 1,
@@ -374,6 +380,7 @@ async function getAdminOneProduct(matchQuery , filterQuery ){
                     _id: "$_id",
                     code: "$code",
                     article : "$article",
+                    brand : "$brand",
                     type : "$type",
                     buyingPrice : "$buyingPrice",
                     sellingPrice : "$sellingPrice",
@@ -397,6 +404,7 @@ async function getAdminOneProduct(matchQuery , filterQuery ){
                 "_id": "$_id._id",
                 "code": "$_id.code",
                 "article" : "$_id.article",
+                "brand" : "$_id.brand",
                 "type" : "$_id.type",
                 "buyingPrice" : "$_id.buyingPrice",
                 "sellingPrice" : "$_id.sellingPrice",
@@ -417,7 +425,7 @@ async function getAdminOneProduct(matchQuery , filterQuery ){
 }
 
 function getUserProducts(query){
-    return Product.find(query).select('_id code article type stock price discount sellingPrice equivalents');
+    return Product.find(query).select('_id code article brand type stock price discount sellingPrice equivalents');
 }
 
 function getUserOneProduct(id){
