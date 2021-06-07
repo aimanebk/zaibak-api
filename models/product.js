@@ -19,6 +19,13 @@ const productSchema = new mongoose.Schema({
         maxlength : 50,
         trim : true
     },
+    brand : {
+        type : String,
+        required : true,
+        minlength : 1,
+        maxlength : 50,
+        trim : true
+    },
     type : {
         type : String,
         required : true,
@@ -126,6 +133,10 @@ function validate(product){
                   .required()
                   .min(3)
                   .max(50),
+        brand : Joi.string()
+                  .required()
+                  .min(1)
+                  .max(50),
         type : Joi.string()
                   .required()
                   .min(3)
@@ -150,6 +161,10 @@ function validateUpdate(product){
                   .required()
                   .min(3)
                   .max(50),
+        brand : Joi.string()
+                  .required()
+                  .min(1)
+                  .max(50),
         type : Joi.string()
                   .required()
                   .min(3)
@@ -161,11 +176,13 @@ function validateUpdate(product){
                       .required(),
         specialDiscount : Joi.number()
                              .required()
+                             .allow(null)
                              .min(0),
         equivalents : Joi.array()
                          .required(),    
         notes : Joi.string()
                    .required()
+                   .allow('')
     });
 
     return schema.validate(product);
