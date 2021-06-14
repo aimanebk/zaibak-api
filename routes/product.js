@@ -176,24 +176,24 @@ async function getAdminProducts(matchQuery , filterQuery ){
         {
             $lookup: {
                 from: 'stocks',
-                localField: 'code',
-                foreignField: 'productCode',
+                localField: '_id',
+                foreignField: 'productId',
                 as: 'stockI'
             }
         },
         {
             $lookup: {
                 from: 'stocks',
-                localField: 'code',
-                foreignField: 'productCode',
+                localField: '_id',
+                foreignField: 'productId',
                 as: 'stockF'
             }
         },
         {
             $lookup: {
                 from: 'trades',
-                localField: 'code',
-                foreignField: 'code',
+                localField: '_id',
+                foreignField: 'productId',
                 as: 'out'
             }
         }, 
@@ -211,7 +211,7 @@ async function getAdminProducts(matchQuery , filterQuery ){
                             as: 'stockI',
                             cond: { $lt: ['$$stockI.date', new Date(filterQuery.bDate)] }
                         }
-                    },
+                },
                 stockF : {
                         '$filter': {
                             input: '$stockF',
@@ -274,24 +274,24 @@ async function getAdminOneProduct(matchQuery , filterQuery ){
         {
             $lookup: {
                 from: 'stocks',
-                localField: 'code',
-                foreignField: 'productCode',
+                localField: '_id',
+                foreignField: 'productId',
                 as: 'stockI'
             }
         },
         {
             $lookup: {
                 from: 'stocks',
-                localField: 'code',
-                foreignField: 'productCode',
+                localField: '_id',
+                foreignField: 'productId',
                 as: 'stockF'
             }
         },
         {
             $lookup: {
                 from: 'trades',
-                localField: 'code',
-                foreignField: 'code',
+                localField: '_id',
+                foreignField: 'productId',
                 as: 'out'
             }
         }, 

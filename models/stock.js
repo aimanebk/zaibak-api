@@ -1,12 +1,9 @@
 const mongoose = require('mongoose');
 
 const stockSchema = new mongoose.Schema({
-    productCode : {
-        type : String,
-        required : true,
-        minlength : 3,
-        maxlength : 50,
-        trim : true
+    productId : {
+        type: mongoose.Schema.Types.ObjectId, 
+        required: true
     },
     stock: {
         type: Number,
@@ -20,9 +17,9 @@ const stockSchema = new mongoose.Schema({
     }    
 });
 
-stockSchema.statics.stockLog = function(productCode, newStock){
+stockSchema.statics.stockLog = function(productId, newStock){
     const stock = new Stock({
-        productCode : productCode,
+        productId : productId,
         stock : newStock
     });
     

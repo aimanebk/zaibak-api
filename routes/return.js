@@ -22,7 +22,7 @@ router.post('/:id', [auth, admin, validateObjectId, validator(validate)], async(
         await product.save();
 
         //ADD NEW STOCK TO STOCK COLLECTION
-        await Stock.stockLog(product.code , stock);
+        await Stock.stockLog(product?._id , stock);
 
 
         //ADD SELL TO TRADES
@@ -38,7 +38,7 @@ router.post('/:id', [auth, admin, validateObjectId, validator(validate)], async(
 
 async function addReturn(product , data){
     const trade =  new Trade({
-        code : product.code,
+        productId : product._id,
         article : product.article,
         username : data.username,
         quantity : data.quantity,
