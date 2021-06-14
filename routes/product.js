@@ -5,6 +5,8 @@ const admin =  require('../middleware/admin');
 const validator = require('../middleware/validate');
 const validateObjectId = require('../middleware/validateObjectId');
 const { Product, validate, validateUpdate } = require('../models/product');
+const { Trade } = require('../models/trade');
+const { Stock } = require('../models/stock');
 const express = require('express');
 const router = express.Router();
 
@@ -91,6 +93,18 @@ router.put('/:id', [auth, admin, validator(validateUpdate)], async(req, res) => 
     }
 });
 
+router.delete('/:id', [auth, admin, validateObjectId], async (req, res) => {
+    try {
+        const result = await remove(req.params.id);
+        if (result.n <= 0)
+            return res.status(404).send({ message: `échec de la suppression.` });
+
+        return res.status(204).send({ message: 'Deleted' });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error.message);
+    }
+});
 
 
 async function createProduct(data){
@@ -431,6 +445,12 @@ function getUserProducts(query){
 
 function getUserOneProduct(id){
     return Product.findById(id).select('-buyingPrice -purchaseVariation -createdAt -updatedAt');
+}
+
+async function remove(id) {
+    await Product.deleteOne({ "_id": id });
+    await Stock.deleteMany({ "productId": id });
+    return await Trade.deleteMany({ "productId": id });
 }
 
 module.exports = router;
