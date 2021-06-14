@@ -113,6 +113,7 @@ async function createProduct(data){
 async function updateProduct(id, newProduct){
     const result = await Product.updateOne({"_id" : id },
                             { 
+                                code : newProduct?.code,
                                 article : newProduct.article,
                                 brand : newProduct.brand,
                                 type : newProduct.type,
