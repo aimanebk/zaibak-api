@@ -117,6 +117,7 @@ async function createProduct(data){
         discount : data.discount,
         specialDiscount : data.specialDiscount,
         equivalents : data.equivalents,
+        oeNumber : data.oeNumber,
         notes : data.notes
     });
 
@@ -135,6 +136,7 @@ async function updateProduct(id, newProduct){
                                 discount : newProduct.discount,
                                 specialDiscount : newProduct.specialDiscount,
                                 equivalents : newProduct.equivalents,
+                                oeNumber : newProduct.oeNumber,
                                 notes : newProduct.notes
                             },
                             { new : true});
@@ -321,6 +323,7 @@ async function getAdminOneProduct(matchQuery , filterQuery ){
                 discount : 1,
                 specialDiscount : 1,
                 equivalents : 1,
+                oeNumber : 1,
                 notes : 1,
                 stockI : {
                         '$filter': {
@@ -371,6 +374,7 @@ async function getAdminOneProduct(matchQuery , filterQuery ){
                 discount : 1,
                 specialDiscount : 1,
                 equivalents : 1,
+                oeNumber : 1,
                 notes : 1,
                 stockI : { $max: "$stockI"},
                 stockF : { $max: "$stockF"},
@@ -402,6 +406,7 @@ async function getAdminOneProduct(matchQuery , filterQuery ){
                     discount : "$discount",
                     specialDiscount : "$specialDiscount",
                     equivalents : "$equivalents",
+                    oeNumber : "$oeNumber",
                     notes : "$notes",
                     stockI : "$stockI",
                     stockF : "$stockF",
@@ -426,6 +431,7 @@ async function getAdminOneProduct(matchQuery , filterQuery ){
                 "discount" : "$_id.discount",
                 "specialDiscount" : "$_id.specialDiscount",
                 "equivalents" : "$_id.equivalents",
+                "oeNumber" : "$_id.oeNumber",
                 "notes" : "$_id.notes",
                 "stockI" : "$_id.stockI",
                 "stockF" : "$_id.stockF",
@@ -440,7 +446,7 @@ async function getAdminOneProduct(matchQuery , filterQuery ){
 }
 
 function getUserProducts(query){
-    return Product.find(query).select('_id code article brand type stock price discount sellingPrice equivalents');
+    return Product.find(query).select('_id code article brand type stock price discount sellingPrice equivalents, oeNumber');
 }
 
 function getUserOneProduct(id){
