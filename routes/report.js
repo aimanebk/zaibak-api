@@ -67,16 +67,16 @@ async function getReport(matchQuery , filterQuery ){
         {
             $lookup: {
                 from: 'stocks',
-                localField: 'code',
-                foreignField: 'productCode',
+                localField: '_id',
+                foreignField: 'productId',
                 as: 'stockI'
             }
         },
         {
             $lookup: {
                 from: 'stocks',
-                localField: 'code',
-                foreignField: 'productCode',
+                localField: '_id',
+                foreignField: 'productId',
                 as: 'stockF'
             }
         },

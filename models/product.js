@@ -157,6 +157,10 @@ function validate(product){
 
 function validateUpdate(product){
     const schema = Joi.object({
+        code : Joi.string()
+                .required()
+                .min(3)
+                .max(50),
         article : Joi.string()
                   .required()
                   .min(3)

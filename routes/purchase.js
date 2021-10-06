@@ -24,7 +24,7 @@ router.post('/:id', [auth, admin, validateObjectId, validator(validatePurchase)]
 
         //ADD NEW STOCK TO STOCK COLLECTION
 
-        const a = await Stock.stockLog(product.code , stock);
+        const a = await Stock.stockLog(product?._id , stock);
 
         //ADD PURCHASE TO PRODUCT
         product.purchaseVariation.push(req.body);

@@ -2,12 +2,9 @@ const mongoose = require('mongoose');
 const Joi = require('@hapi/joi');
 
 const tradeSchema = new mongoose.Schema({
-    code : {
-        type : String,
-        required : true,
-        minlength : 3,
-        maxlength : 50,
-        trim : true
+    productId : {
+        type: mongoose.Schema.Types.ObjectId, 
+        required: true
     },
     article : {
         type : String,

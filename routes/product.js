@@ -5,6 +5,8 @@ const admin =  require('../middleware/admin');
 const validator = require('../middleware/validate');
 const validateObjectId = require('../middleware/validateObjectId');
 const { Product, validate, validateUpdate } = require('../models/product');
+const { Trade } = require('../models/trade');
+const { Stock } = require('../models/stock');
 const express = require('express');
 const router = express.Router();
 
@@ -91,6 +93,18 @@ router.put('/:id', [auth, admin, validator(validateUpdate)], async(req, res) => 
     }
 });
 
+router.delete('/:id', [auth, admin, validateObjectId], async (req, res) => {
+    try {
+        const result = await remove(req.params.id);
+        if (result.n <= 0)
+            return res.status(404).send({ message: `échec de la suppression.` });
+
+        return res.status(204).send({ message: 'Deleted' });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error.message);
+    }
+});
 
 
 async function createProduct(data){
@@ -113,6 +127,7 @@ async function createProduct(data){
 async function updateProduct(id, newProduct){
     const result = await Product.updateOne({"_id" : id },
                             { 
+                                code : newProduct?.code,
                                 article : newProduct.article,
                                 brand : newProduct.brand,
                                 type : newProduct.type,
@@ -176,24 +191,24 @@ async function getAdminProducts(matchQuery , filterQuery ){
         {
             $lookup: {
                 from: 'stocks',
-                localField: 'code',
-                foreignField: 'productCode',
+                localField: '_id',
+                foreignField: 'productId',
                 as: 'stockI'
             }
         },
         {
             $lookup: {
                 from: 'stocks',
-                localField: 'code',
-                foreignField: 'productCode',
+                localField: '_id',
+                foreignField: 'productId',
                 as: 'stockF'
             }
         },
         {
             $lookup: {
                 from: 'trades',
-                localField: 'code',
-                foreignField: 'code',
+                localField: '_id',
+                foreignField: 'productId',
                 as: 'out'
             }
         }, 
@@ -211,7 +226,7 @@ async function getAdminProducts(matchQuery , filterQuery ){
                             as: 'stockI',
                             cond: { $lt: ['$$stockI.date', new Date(filterQuery.bDate)] }
                         }
-                    },
+                },
                 stockF : {
                         '$filter': {
                             input: '$stockF',
@@ -274,24 +289,24 @@ async function getAdminOneProduct(matchQuery , filterQuery ){
         {
             $lookup: {
                 from: 'stocks',
-                localField: 'code',
-                foreignField: 'productCode',
+                localField: '_id',
+                foreignField: 'productId',
                 as: 'stockI'
             }
         },
         {
             $lookup: {
                 from: 'stocks',
-                localField: 'code',
-                foreignField: 'productCode',
+                localField: '_id',
+                foreignField: 'productId',
                 as: 'stockF'
             }
         },
         {
             $lookup: {
                 from: 'trades',
-                localField: 'code',
-                foreignField: 'code',
+                localField: '_id',
+                foreignField: 'productId',
                 as: 'out'
             }
         }, 
@@ -430,6 +445,12 @@ function getUserProducts(query){
 
 function getUserOneProduct(id){
     return Product.findById(id).select('-buyingPrice -purchaseVariation -createdAt -updatedAt');
+}
+
+async function remove(id) {
+    await Product.deleteOne({ "_id": id });
+    await Stock.deleteMany({ "productId": id });
+    return await Trade.deleteMany({ "productId": id });
 }
 
 module.exports = router;
