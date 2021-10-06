@@ -454,9 +454,11 @@ function getUserOneProduct(id){
 }
 
 async function remove(id) {
-    await Product.deleteOne({ "_id": id });
+    const result = await Product.deleteOne({ "_id": id });
+    if (result.n <= 0) return result;
     await Stock.deleteMany({ "productId": id });
-    return await Trade.deleteMany({ "productId": id });
+    await Trade.deleteMany({ "productId": id });
+    return result;
 }
 
 module.exports = router;
