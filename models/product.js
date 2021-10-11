@@ -118,7 +118,9 @@ productSchema.methods.calculateBuyingPrice = function(quantite, price){
 }
 
 productSchema.methods.updateStock = function(quantite){
-    let newStock = this.stock + quantite;
+    if(isNaN(quantite)) return newStock;
+
+    let newStock = this.stock + Number(quantite);
     this.stock =  newStock;
 
     return newStock
@@ -185,7 +187,6 @@ function validateUpdate(product){
         discount : Joi.array()
                       .required(),
         specialDiscount : Joi.number()
-                             .required()
                              .allow(null)
                              .min(0),
         equivalents : Joi.array()
